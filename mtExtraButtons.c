@@ -90,7 +90,7 @@ int main(void)
 
     // Create an event tap.
     eventMask = (1 << kCGEventOtherMouseDown) | (1 << kCGEventScrollWheel);
-    eventTap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, 0, eventMask, myCGEventCallback, NULL);
+    eventTap = CGEventTapCreate(kCGHIDEventTap, kCGHeadInsertEventTap, 0, eventMask, myCGEventCallback, NULL);
                    
     if (!eventTap) {
         fprintf(stderr, "Failed to create event tap\n");
