@@ -12,8 +12,6 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
-const int LINES = 5;
-
 CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
 
 	if (type == kCGEventOtherMouseDown){	// mouse buttons detected
@@ -64,15 +62,19 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef
 		
 	} else if (type == kCGEventScrollWheel) {	// scroll wheel detected
 		
-		// The external scroll wheel seems to get pulled into the OS as a "pixel" per wheel click rather than a line. Yet when using
-		// an external wheel, the UI won't scroll with only one pixel per click. I have taken the pixel value and piped it to the line
-		// value with a max clamp. Each slow click will deliver one line scroll, and faster clicks will do a little acceleration up to
-		// the maximum value. It's not like acceleration was bad, just sucks to have zero movement on the first few scroll clicks.
+		// The external scroll wheel seems to get pulled into the OS as a "pixel" per wheel click rather than a line.
+		// Yet when using an external wheel, the UI won't scroll with only one pixel per click.
+		// I have taken the pixel value and added +/- 1 to the line delta based on the sign of the pixel delta.
+		// This preserves normal mouse scrolling behavior. It's not like acceleration was bad, just sucks to have
+		// zero movement on the first few scroll clicks.
+		//
+		// This code ensures that the scroll wheel will move at least one full line if motion is detected.
+		
 		if (!CGEventGetIntegerValueField(event, kCGScrollWheelEventIsContinuous)) {	// ignore continuous-scroll devices like the touchpad
-			int64_t delta = CGEventGetIntegerValueField(event, kCGScrollWheelEventPointDeltaAxis1);	// signed scroll wheel motion
-			//fprintf(stderr, "Scroll delta %d", (int)delta);
-			if (delta > LINES) delta = LINES; if (delta < -LINES) delta = -LINES;	// clamp to fixed +/- increment
-			CGEventSetIntegerValueField(event,kCGScrollWheelEventDeltaAxis1, delta);	// edit the event fields
+			int64_t pointDelta = CGEventGetIntegerValueField(event, kCGScrollWheelEventPointDeltaAxis1);	// signed scroll wheel motion
+			int64_t lineDelta = CGEventGetIntegerValueField(event, kCGScrollWheelEventDeltaAxis1);
+			if (pointDelta > 0) lineDelta += 1; if (pointDelta < 0) lineDelta -= 1;	// clamp to minimum fixed +/- increment
+			CGEventSetIntegerValueField(event,kCGScrollWheelEventDeltaAxis1, lineDelta);	// edit the event fields
 			return event;	// pass the modified event through to the UI
 		}
 	}
