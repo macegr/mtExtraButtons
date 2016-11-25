@@ -70,12 +70,11 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef
 		// the maximum value. It's not like acceleration was bad, just sucks to have zero movement on the first few scroll clicks.
 		if (!CGEventGetIntegerValueField(event, kCGScrollWheelEventIsContinuous)) {	// ignore continuous-scroll devices like the touchpad
 			int64_t delta = CGEventGetIntegerValueField(event, kCGScrollWheelEventPointDeltaAxis1);	// signed scroll wheel motion
-			fprintf(stderr, "Scroll delta %d", (int)delta);
+			//fprintf(stderr, "Scroll delta %d", (int)delta);
 			if (delta > LINES) delta = LINES; if (delta < -LINES) delta = -LINES;	// clamp to fixed +/- increment
 			CGEventSetIntegerValueField(event,kCGScrollWheelEventDeltaAxis1, delta);	// edit the event fields
 			return event;	// pass the modified event through to the UI
 		}
-		
 	}
     	
 	// if we detect other button presses just pass them through

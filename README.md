@@ -1,5 +1,5 @@
 # mtExtraButtons
-Map extra mouse buttons (3 and 4 out of 0 indexed button list) to forward and back shortcuts in OSX
+Map extra mouse buttons (3 and 4 out of zero-indexed button list) to forward and back shortcuts in OSX
 
 This is a very hacky program to get some functionality out of the extra buttons on a mouse that has more buttons than Apple thinks you'd ever use. The ONLY thing is does is map the thumb buttons to forward and back shortcuts that work in web browsers on OSX (as well as in Finder). The shortcuts are Command-[ and Command-].
 
