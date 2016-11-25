@@ -73,7 +73,7 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef
 		if (!CGEventGetIntegerValueField(event, kCGScrollWheelEventIsContinuous)) {	// ignore continuous-scroll devices like the touchpad
 			int64_t pointDelta = CGEventGetIntegerValueField(event, kCGScrollWheelEventPointDeltaAxis1);	// signed scroll wheel motion
 			int64_t lineDelta = CGEventGetIntegerValueField(event, kCGScrollWheelEventDeltaAxis1);
-			if (pointDelta > 0) lineDelta += 1; if (pointDelta < 0) lineDelta -= 1;	// clamp to minimum fixed +/- increment
+			if (pointDelta > 0 && lineDelta == 0) lineDelta = 1; if (pointDelta < 0 && lineDelta == 0) lineDelta = -1;	// clamp to minimum fixed +/- increment
 			CGEventSetIntegerValueField(event,kCGScrollWheelEventDeltaAxis1, lineDelta);	// edit the event fields
 			return event;	// pass the modified event through to the UI
 		}
